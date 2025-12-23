@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tourist Digital ID System</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🏝️ Tourist Digital ID System</h1>
+            <div class="user-status" id="userStatus">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Not Registered</span>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab('registration')">Registration</button>
+            <button class="tab-btn" onclick="showTab('tracking')">GPS Tracking</button>
+            <button class="tab-btn" onclick="showTab('emergency')">Emergency</button>
+            <button class="tab-btn" onclick="showTab('authority')">Authority Dashboard</button>
+        </nav>
+
+        <!-- Registration Tab -->
+        <div id="registration" class="tab-content active">
+            <div class="card">
+                <h2>Tourist Digital ID Registration</h2>
+                <form id="registrationForm" class="form">
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="passport">Passport Number *</label>
+                        <input type="text" id="passport" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nationality">Nationality *</label>
+                        <input type="text" id="nationality" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="hotel">Hotel/Accommodation</label>
+                        <input type="text" id="hotel">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emergencyContact">Emergency Contact</label>
+                        <input type="text" id="emergencyContact">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Register Digital ID</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- GPS Tracking Tab -->
+        <div id="tracking" class="tab-content">
+            <div class="card">
+                <h2>GPS Tracking Status</h2>
+                <div class="tracking-info">
+                    <div class="info-item">
+                        <strong>Location Status:</strong>
+                        <span id="locationStatus">Disabled</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Current Position:</strong>
+                        <span id="currentPosition">Unknown</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Zone Status:</strong>
+                        <span id="zoneStatus" class="zone-safe">Safe Zone</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Last Update:</strong>
+                        <span id="lastUpdate">Never</span>
+                    </div>
+                </div>
+                
+                <div class="tracking-controls">
+                    <button id="startTracking" class="btn btn-success">Start GPS Tracking</button>
+                    <button id="stopTracking" class="btn btn-danger" disabled>Stop Tracking</button>
+                </div>
+                
+                <div id="trackingMap" class="map-container"></div>
+            </div>
+        </div>
+
+        <!-- Emergency Tab -->
+        <div id="emergency" class="tab-content">
+            <div class="card">
+                <h2>Emergency Services</h2>
+                
+                <div class="panic-section">
+                    <button id="panicButton" class="panic-btn">
+                        🚨 PANIC BUTTON 🚨
+                    </button>
+                    <p class="panic-info">Press to send emergency alert</p>
+                </div>
+                
+                <div class="emergency-contacts">
+                    <h3>Emergency Contacts</h3>
+                    <div class="contact-list">
+                        <div class="contact-item">
+                            <span class="contact-type">Police:</span>
+                            <span class="contact-number">911</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-type">Medical:</span>
+                            <span class="contact-number">112</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-type">Tourist Hotline:</span>
+                            <span class="contact-number">1-800-TOURIST</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert-history">
+                    <h3>Alert History</h3>
+                    <div id="alertHistory" class="history-list">
+                        <p class="no-alerts">No emergency alerts sent</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Authority Dashboard Tab -->
+        <div id="authority" class="tab-content">
+            <div class="card">
+                <h2>Authority Dashboard</h2>
+                <div class="dashboard-controls">
+                    <button id="refreshMap" class="btn btn-secondary">Refresh Map</button>
+                    <span class="tourist-count">Active Tourists: <span id="activeTourists">0</span></span>
+                </div>
+                
+                <div id="authorityMap" class="map-container large"></div>
+                
+                <div class="tourist-list">
+                    <h3>Registered Tourists</h3>
+                    <div id="touristList" class="list-container">
+                        <p class="no-data">No tourists registered</p>
+                    </div>
+                </div>
+                
+                <div class="zone-management">
+                    <h3>Geo-fence Zones</h3>
+                    <button id="addSafeZone" class="btn btn-success">Add Safe Zone</button>
+                    <button id="addRiskyZone" class="btn btn-warning">Add Risky Zone</button>
+                    <div id="zoneList" class="zone-list">
+                        <!-- Zones will be listed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="alertTitle">Alert</h2>
+            <p id="alertMessage"></p>
+            <button id="alertOk" class="btn btn-primary">OK</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
